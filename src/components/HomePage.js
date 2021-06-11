@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import PostList from './PostList/PostList';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import PostList from "./PostList/PostList";
+import axios from "axios";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
 
+  function getPosts() {
+    const request = axios.get("http://localhost:4001/posts");
+
+    request.then((response) => {
+      setPosts([...posts, ...response.data]);
+    });
+    request.catch((error) => {
+      console.log(error.response);
+    });
+  }
+
   useEffect(() => {
-    setPosts([{
-      id: 1,
-      title: 'Hello World',
-      coverUrl: 'https://miro.medium.com/max/1024/1*OohqW5DGh9CQS4hLY5FXzA.png',
-      contentPreview: 'Esta é a estrutura de um post esperado pelo front-end',
-      content: 'Este é o conteúdo do post, o que realmente vai aparecer na página do post...',
-      commentCount: 2
-    }]);
+    getPosts();
   }, []);
 
-  return (
-    <PostList name="Daily stories" posts={posts} />
-  );
+  return <PostList name="Daily stories" posts={posts} />;
 }
